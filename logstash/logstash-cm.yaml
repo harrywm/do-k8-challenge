@@ -38,7 +38,7 @@ data:
     output {
       elasticsearch {
         index => "logstash-%{[@metadata][beat]}"
-        hosts => [ "https://10.245.74.127:9200/" ]
+        hosts => [ "${ES_HOSTS}" ]
         user => "${ES_USER}"
         password => "${ES_PASSWORD}"
         cacert => '/etc/logstash/certificates/ca.crt'
