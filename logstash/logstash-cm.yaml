@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-configmap
+data:
+  logstash.yml: |
+    http.host: "0.0.0.0"
+    path.config: /usr/share/logstash/pipeline
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+      if [message] =~ "\tat" {
+        grok {
+          match => ["message", "^(\tat)"]
+          add_tag => ["stacktrace"]
+        }
+      }
+  
+      grok {
+        match => [ "message",
+                   "(?<timestamp>%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{TIME})  %{LOGLEVEL:level} %{NUMBER:pid} --- .+? :\s+(?<logmessage>.*)"
+                 ]
+      }
+  
+      date {
+        match => [ "timestamp" , "yyyy-MM-dd HH:mm:ss.SSS" ]
+      }
+  
+      mutate {
+        remove_field => ["message"]
+      }
+    }
+
+    output {
+      elasticsearch {
+        index => "logstash-%{[@metadata][beat]}"
+        hosts => [ "https://10.245.74.127:9200/" ]
+        user => "${ES_USER}"
+        password => "${ES_PASSWORD}"
+        cacert => '/etc/logstash/certificates/ca.crt'
+      }
+    }

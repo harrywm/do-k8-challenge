@@ -36,15 +36,36 @@ spec:
     configMap:
       name: logstash-configmap
       items:
-        - key: logstash-cm.yml
-          path: logstash/logstash-cm.yml
+        - key: logstash.yml
+          path: logstash.yml
   - name: logstash-pipeline-volume
     configMap:
       name: logstash-configmap
       items:
         - key: logstash.conf
-          path: logstash/logstash.conf
+          path: logstash.conf
   - name: cert-ca
     secret:
       secretName: es-es-http-certs-public
 status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: logstash
+  name: logstash
+spec:
+  ports:
+  - name: "25826"
+    port: 25826
+    targetPort: 25826
+  - name: "5044"
+    port: 5044
+    targetPort: 5044
+  selector:
+    app: logstash
+status:
+  loadBalancer: {}
