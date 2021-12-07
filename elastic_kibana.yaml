@@ -8,6 +8,7 @@ spec:
   nodeSets:
   - name: default
     config:
+      node.store.allow_mmap: false
       node.master: true
       node.data: true
       node.ingest: true
@@ -23,19 +24,18 @@ spec:
             privileged: true
           command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
         containers:
-        - name: es
+        - name: elasticsearch
           resources:
             requests:
-              memory: 2Gi
-              cpu: 0.5
+              memory: 1Gi
+              cpu: 0.75
             limits:
               memory: 2Gi
               cpu: 1
           env:
           - name: ES_JAVA_OPTS
             value: "-Xms1g -Xmx1g"
-    count: 2
-    # request 10Gi of persistent data storage for pods in this topology element
+    count: 3
   http:
     service:
       spec:
@@ -47,6 +47,8 @@ apiVersion: kibana.k8s.elastic.co/v1
 kind: Kibana
 metadata:
     name: es
+    annotations:
+      replicas-max: "1"
 spec:
     version: 7.15.2
     count: 1
@@ -69,8 +71,11 @@ spec:
                 app: es
         spec:
             containers:
-            - name: kb
+            - name: kibana
               resources:
+                requests:
+                  memory: 1Gi
+                  cpu: 0.6
                 limits:
                   memory: 1Gi
-                  cpu: 1
+                  cpu: 0.75

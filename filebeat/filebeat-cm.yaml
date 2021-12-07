@@ -20,4 +20,4 @@ data:
       - add_host_metadata:
     
     output.logstash:
-      hosts: '${LOGSTASH_URL}'
+      hosts: '10.245.19.128'
