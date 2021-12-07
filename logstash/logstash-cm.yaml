@@ -12,29 +12,7 @@ data:
         port => 5044
       }
     }
-    filter {
-      if [message] =~ "\tat" {
-        grok {
-          match => ["message", "^(\tat)"]
-          add_tag => ["stacktrace"]
-        }
-      }
-  
-      grok {
-        match => [ "message",
-                   "(?<timestamp>%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{TIME})  %{LOGLEVEL:level} %{NUMBER:pid} --- .+? :\s+(?<logmessage>.*)"
-                 ]
-      }
-  
-      date {
-        match => [ "timestamp" , "yyyy-MM-dd HH:mm:ss.SSS" ]
-      }
-  
-      mutate {
-        remove_field => ["message"]
-      }
-    }
-
+    filter {}
     output {
       elasticsearch {
         index => "logstash-%{[@metadata][beat]}"
