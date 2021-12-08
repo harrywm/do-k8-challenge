@@ -23,9 +23,9 @@ During the deployment of Logstash, I found myself spending a lot of time reconfi
 
 Interestingly, Kibana dashboards were a hugely beneficial tool in finding and monitoring this issue. I developed a dashboard tracking the count of logs being indexed from Logstash (`index: logstash-*`) in a line graph, and matched against the count of logs being ingested with the tag `_grokfailure`. This allowed me to follow the impact of the changes I was making to the stack. As I re-configured and re-deployed Logstash and Logstash-configmap I could track that logs were in fact being indexed, and how many of them were attributable to a Grok filtering failure!
 
-![alt text][grok failure plotting]
-
-[grok failure plotting]: https://github.com/harrywm/do-k8-challenge/blob/master/resources/grokfailure.png
+<p align="center">
+  <img src="https://github.com/harrywm/do-k8-challenge/blob/master/resources/grokfailure.png?raw=true" alt="Grok Failure"/>
+</p>
 
 ### "master_not_discovered_exception"
 
@@ -34,11 +34,13 @@ Resourcing Issues! As mentioned above, I had some trouble with finding the sweet
 Debugging this was a bit of a task. It started with wondering why I couldn't get a healthcheck from my Elasticsearch URL. 
 To make the whole ordeal a bit simpler, I forwarded the Elasticsearch port from the HTTP Service I spun up with the deployment.
 
-![alt text][port forward]
-
-[port forward]: https://github.com/harrywm/do-k8-challenge/blob/master/resources/portforward.PNG
-
+<p align="center">
+  <img src="https://github.com/harrywm/do-k8-challenge/blob/master/resources/portforward.PNG?raw=true" alt="Port Forwarding"/>
+</p>
+                                     
 This allowed me to reach ES at localhost:9200, rather than having to keep the external IP of the service on hand. 
-Hitting any ES endpoint, even a healthcheck, resulted in this painful error `{"error":{"root_cause":[{"type":"master_not_discovered_exception","reason":null}],"type":"master_not_discovered_exception","reason":null},"status":503}`.
+Hitting any ES endpoint, even a healthcheck, resulted in this painful error: 
+
+`{"error":{"root_cause":[{"type":"master_not_discovered_exception","reason":null}],"type":"master_not_discovered_exception","reason":null},"status":503}`
 
 I later found out this is due to the Elasticsearch cluster configuration not being able to delegate a master node! Which in turn was due to a lack of resources on my K8 nodes, stopping the deployment from being able to achieve 3 pods. 1 master and 2 worker (ES) nodes.
