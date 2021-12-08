@@ -19,6 +19,11 @@ One thing to note that was a challenge was managing resources. I found myself ha
   <img src="https://github.com/harrywm/do-k8-challenge/blob/master/resources/dashboard.png?raw=true" alt="Dashboard"/>
 </p>
 
+## Working with Digital Ocean and `kubectl`
+
+Configuring `kubectl` to work with Digital Ocean and the associated cluster was simple. Using the `doctl` CLI to configure my Digital Ocean credentials, then following simple instructions on passing the cluster information to my `kubeconfig`, I was quickly able to get started investigating and working with the cluster.
+
+`doctl k8s cluster kubecfg save`
 
 ## Notable Debugging 
 
@@ -48,4 +53,4 @@ Hitting any ES endpoint, even a healthcheck, resulted in this painful error:
 
 `{"error":{"root_cause":[{"type":"master_not_discovered_exception","reason":null}],"type":"master_not_discovered_exception","reason":null},"status":503}`
 
-I later found out this is due to the Elasticsearch cluster configuration not being able to delegate a master node! Which in turn was due to a lack of resources on my K8 nodes, stopping the deployment from being able to achieve 3 pods. 1 master and 2 worker (ES) nodes.
+I later found out this is due to the Elasticsearch cluster configuration not being able to delegate a master node! Which in turn was due to a lack of resources on my K8 nodes, stopping the deployment from being able to achieve 3 pods. 1 master and 2 worker (ES) nodes. Eventually after a few different configuration changes, I settled on a collection of values that worked for the nodes available, while also being able to maintain a Logstash pod, Filebeat daemonset, Kibana deployment and the ECK Operator.
