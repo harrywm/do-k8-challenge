@@ -1,4 +1,4 @@
-## Digital Ocean K8 Challenge
+# Digital Ocean K8 Challenge
 
 Repo for the Digital Ocean K8s Challenge
 
@@ -17,6 +17,8 @@ One thing to note that was a challenge was managing resources. I found myself ha
 
 ## Notable Debugging 
 
+### Grokin' around the Christmas Tree
+
 During the deployment of Logstash, I found myself spending a lot of time reconfiguring the Logstash Config-map, which contained the Grok filter for filtering logs coming into the pipeline. I tried many different Grok interpreters online but in the end settled on no filter, as I wasn't focusing on any specific logs. Though I do understand the benefit of filters, and can see how they may be applied to aggregated logging across a large microservice architecture using many different technologies.
 
 Interestingly, Kibana dashboards were a hugely beneficial tool in finding and monitoring this issue. I developed a dashboard tracking the count of logs being indexed from Logstash (`index: logstash-*`) in a line graph, and matched against the count of logs being ingested with the tag `_grokfailure`. This allowed me to follow the impact of the changes I was making to the stack. As I re-configured and re-deployed Logstash and Logstash-configmap I could track that logs were in fact being indexed, and how many of them were attributable to a Grok filtering failure!
@@ -24,3 +26,11 @@ Interestingly, Kibana dashboards were a hugely beneficial tool in finding and mo
 ![al text][grok failure plotting]
 
 [grok failure plotting]: https://github.com/harrywm/do-k8-challenge/blob/master/resources/grokfailure.png
+
+### "master_not_discovered_exception"
+
+Resourcing Issues! As mentioned above, I had some trouble with finding the sweet spot for my pod resources. This involved a lot of `kubectl apply -f .`, `kubectl describe nodes` and rejigging of resource requests. You can see what I've settled on in each manifest for the services. This results in a full deployment on the highest spec nodes available on Digital Ocean within the challenge credit range. 
+
+Debugging this was a bit of a task. It started with wondering why I couldn't get a healthcheck from my Elasticsearch URL. 
+To make the whole ordeal a bit simpler, I forwarded the Elasticsearch port from the HTTP Service I spun up with the deployment.
+
