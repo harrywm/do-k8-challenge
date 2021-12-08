@@ -15,6 +15,11 @@ Initially started with the deployment of Elasticsearch and Kibana, to ensure a b
 
 One thing to note that was a challenge was managing resources. I found myself having to resize my pods regularly as I wanted to deploy more services. Perhaps this is due to my lack of forsight, understanding of node resourcing, or something left to be learned in my way-of-working with Kubernetes.
 
+<p align="center">
+  <img src="https://github.com/harrywm/do-k8-challenge/blob/master/resources/dashboard.png?raw=true" alt="Dashboard"/>
+</p>
+
+
 ## Notable Debugging 
 
 ### Grokin' around the Christmas Tree
