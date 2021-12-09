@@ -54,3 +54,14 @@ Hitting any ES endpoint, even a healthcheck, resulted in this painful error:
 `{"error":{"root_cause":[{"type":"master_not_discovered_exception","reason":null}],"type":"master_not_discovered_exception","reason":null},"status":503}`
 
 I later found out this is due to the Elasticsearch cluster configuration not being able to delegate a master node! Which in turn was due to a lack of resources on my K8 nodes, stopping the deployment from being able to achieve 3 pods. 1 master and 2 worker (ES) nodes. Eventually after a few different configuration changes, I settled on a collection of values that worked for the nodes available, while also being able to maintain a Logstash pod, Filebeat daemonset, Kibana deployment and the ECK Operator.
+
+## Resources
+
+ - https://raphaeldelio.medium.com/deploy-the-elastic-stack-in-kubernetes-with-the-elastic-cloud-on-kubernetes-eck-b51f667828f9
+ - https://www.digitalocean.com/community/tutorials/how-to-install-elasticsearch-logstash-and-kibana-elastic-stack-on-ubuntu-20-04
+ - https://www.densify.com/kubernetes-tools/kubernetes-resource-limits
+ - https://opster.com/guides/elasticsearch/operations/elasticsearch-master-node-not-discovered/
+ - https://sookocheff.com/post/kubernetes/understanding-kubernetes-networking-model/#pod-to-service
+ - https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/workloads/controllers/daemonset/
+ - http://www.yamllint.com/
+ - https://artifacthub.io/packages/helm/elastic/eck-operator
